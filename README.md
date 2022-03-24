@@ -47,6 +47,7 @@ Now, everything should be installed (I hope).
 
 The user needs to modify the main section at the end of the file **create_CNNs.py**. The path to the image folder where the training data is, the size of the images to be used and the used network should be defined there. The image data folder should contain the subfolders that are named after the class names. Each subfolder should then contain the images that belong to that class. Like this:
 
+<pre>
 ├── <name_of_teaching_data_folder>
 │   ├── <name_of_class1>
 │   |   ├── <img1>
@@ -58,25 +59,7 @@ The user needs to modify the main section at the end of the file **create_CNNs.p
 │   ├── <name_of_class3>
 |   |        ...
 │   └── <name_of_classm>
-  
-.
-+-- _config.yml
-+-- _drafts
-|   +-- begin-with-the-crazy-ideas.textile
-|   +-- on-simplicity-in-technology.markdown
-+-- _includes
-|   +-- footer.html
-|   +-- header.html
-+-- _layouts
-|   +-- default.html
-|   +-- post.html
-+-- _posts
-|   +-- 2007-10-29-why-every-programmer-should-play-nethack.textile
-|   +-- 2009-04-26-barcamp-boston-4-roundup.textile
-+-- _data
-|   +-- members.yml
-+-- _site
-+-- index.html
+</pre>
 
 The script will save the checkpoin to the model with the highest validation accuracy during teaching. After the teaching, the weights of the best model, the teaching parameters and the accuracies and losses of each training epoch are saved to a result folder.  
 
