@@ -365,8 +365,8 @@ def create_densenet(num_classes):
     net.add(layers.Dense(num_classes))
     return net
 
-def create_custom_cnn(num_classes):
-    """Creates a custon CNN
+def create_basic_cnn(num_classes):
+    """Creates a basic CNN
 
     Args:
         num_classes (int): Number of classes
@@ -584,7 +584,7 @@ def main(cnn_type, image_path, image_shape, batch_size, epochs=200,
 
     Args:
         cnn_type (string): The CNN architecture:
-                    "custom", "AlexNet", "VGG", "NiN", "GoogLeNet", "ResNet" or "DenseNet"
+                    "basic", "AlexNet", "VGG", "NiN", "GoogLeNet", "ResNet" or "DenseNet"
         image_path (string): The path to the folder containing the subfolders named by the 
                                 class names that their images represent
         image_shape (tuple): (image height, image width, channels) or 
@@ -627,8 +627,8 @@ def main(cnn_type, image_path, image_shape, batch_size, epochs=200,
         model = create_resnet(n_classes)
     elif cnn_type == "DenseNet":
         model = create_densenet(n_classes)
-    elif cnn_type == "custom":
-        model = create_custom_cnn(n_classes)
+    elif cnn_type == "basic":
+        model = create_basic_cnn(n_classes)
     else:
         raise ValueError(f"Unknown network type: {cnn_type}!")
     model = add_normalization_layer(model, image_shape)
@@ -644,6 +644,9 @@ def main(cnn_type, image_path, image_shape, batch_size, epochs=200,
     visualize_results(history, epochs, save_folder, show_graphs)
 
 if __name__ == "__main__":
+    # The path to the train set that contains the data belonging to different 
+    # classes in its subfolders. The subfolder names = class names.
     image_path = r"drive:\Path\to\images\train_set" 
-    # Hakemisto, jossa eri luokkiin kuuluva data alihakemistoina. Alihakemistojen nimet = luokkien nimet. 
-    main("custom", image_path, (512, 512), 512, show_graphs=False)
+    
+    # Call to the main function to create the CNN. 
+    main("basic", image_path, (512, 512), 512, show_graphs=False)
