@@ -34,39 +34,57 @@ def test_model(model_folder, test_img_folder):
     n_imgs = sum([len(files) for r, d, files in walk(test_img_folder)])
 
     # Testing with images
-    correct_predictions = 0
     dir_list = listdir(test_img_folder)
+    img_list = []
+    class_list = []
     for class_folder in dir_list:
         class_path = join(test_img_folder, class_folder)
         file_list = listdir(class_path)
         for img_name in file_list:
             img_path = join(class_path, img_name)
             
-            # Ladataan kuva keras-maailmaan
+            # Loading the image to the keras world
             img = keras.preprocessing.image.load_img(img_path, 
                 target_size=(img_height, img_width))
-
             img_array = keras.preprocessing.image.img_to_array(img)
-            img_array = tf.expand_dims(img_array, 0) # Create a batch
+            
+            try:
+                class_ind = class_names.index(class_folder)
+            except ValueError:
+                print(f"Error! Class {class_folder} has not been taught to the model.")
 
-            predictions = model.predict(img_array)
-            score = tf.nn.softmax(predictions[0])
+            # Appending the lists of images and class names
+            img_list.append(img_array)
+            class_list.append(class_ind)
+    
+    # Predictions
+    img_array = np.array(img_list) # Image list to a NumPy array
+    predictions = model.predict(img_array)
+    scores = tf.nn.softmax(predictions)
+    pred_classes = np.argmax(scores, axis=1)
 
-            predicted_class = class_names[np.argmax(score)] 
+    # Number of correct predictions
+    correct_classes = np.array(class_list)
+    correct_predictions = int(np.sum(pred_classes==correct_classes))
 
-            # If the prediction was correct, we'll increase
-            # the count of correct predictions.
-            if predicted_class == class_folder:
-                correct_predictions += 1
-
+    # Results
     test_accuracy = correct_predictions / n_imgs
     print(f"Correct predictions: {correct_predictions}")
-    print(f"Total number of images: {n_imgs}")    
+    print(f"Number of images: {n_imgs}")    
     print(test_accuracy)
-    return test_accuracy
+    return test_accuracy, correct_predictions, n_imgs
+
 
 if __name__ == "__main__":
     model_path = r"drive:\Path\to\model"
     test_img_path = r"drive:\Path\to\images"
-    test_model(model_path, test_img_path)
-     
+
+    ta, cp, ni = test_model(model_path, test_img_path)
+
+    result_data = json.dumps({"test_accuracy": ta,
+                "correct_predictions": cp,
+                "number_of_test_images": ni,
+                "test_image_folder": test_img_path}, indent=4)
+    with open(join(model_path, "test_results.json"), "w") as savefile:
+        savefile.write(result_data)
+        savefile.close() 
